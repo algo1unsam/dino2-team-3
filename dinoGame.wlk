@@ -1,6 +1,6 @@
 import wollok.game.*
 
-const velocidad = 250
+const velocidad = 750
 
 object juego{
 
@@ -80,13 +80,23 @@ object cactus {
 	
 	method mover(){
 		//COMPLETAR
+		if(self.paso()){
+			position = self.posicionInicial()
+		}else{
+			position = position.left(1)
+		}
 	}
+
+	method paso()= self.position().x()==0
 	
 	method chocar(){
 		//COMPLETAR
+		juego.terminar()
 	}
     method detener(){
 		//COMPLETAR
+		game.removeTickEvent("moverCactus")
+		
 	}
 }
 
@@ -105,20 +115,29 @@ object dino {
 	
 	method saltar(){
 		//COMPLETAR
+		if(self.estaEnElSuelo()){
+			self.subir()
+			game.onTick(velocidad*3,"gravedad",{self.bajar()})
+		}
 	}
+	method estaEnElSuelo()= self.position().y()==suelo.position().y()
 	
 	method subir(){
 		position = position.up(1)
 	}
 	
 	method bajar(){
-		position = position.down(1)
+		if(!self.estaEnElSuelo()){
+			position = position.down(1)
+			game.removeTickEvent("gravedad")
+		}
 	}
 	method morir(){
 		game.say(self,"¡Auch!")
 		vivo = false
 	}
 	method iniciar() {
+		game.say(self,"")
 		vivo = true
 	}
 	method estaVivo() {
