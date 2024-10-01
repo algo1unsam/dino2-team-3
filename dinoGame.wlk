@@ -65,6 +65,7 @@ object reloj {
 	}
 	method iniciar(){
 		segundos = 0
+		minutos = 0
 		game.onTick(1000,"tiempo",{self.pasarTiempo()})
 	}
 	method detener(){
