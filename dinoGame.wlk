@@ -1,6 +1,6 @@
 import wollok.game.*
 
-const velocidad = 250
+const velocidad = 750
 
 object juego{
 
@@ -50,20 +50,26 @@ object gameOver {
 }
 
 object reloj {
-	var property tiempo = 0 
-	method text() = tiempo.toString()
-  //method textColor() = "00FF00FF"
+	var property segundos = 0
+	var property minutos = 0
+	method text() = "" + minutos + ": " + segundos
+    method textColor() = "FF0000FF"
 	method position() = game.at(1, game.height()-1)
 	
 	method pasarTiempo() {
-		//COMPLETAR
+	if (segundos == 60){
+		minutos = minutos + 1
+		segundos = 0
+	}
+	segundos = segundos + 1
 	}
 	method iniciar(){
-		tiempo = 0
-		game.onTick(100,"tiempo",{self.pasarTiempo()})
+		segundos = 0
+		minutos = 0
+		game.onTick(1000,"tiempo",{self.pasarTiempo()})
 	}
 	method detener(){
-		//COMPLETAR
+		game.removeTickEvent("tiempo")
 	}
 }
 
@@ -80,13 +86,23 @@ object cactus {
 	
 	method mover(){
 		//COMPLETAR
+		if(self.paso()){
+			position = self.posicionInicial()
+		}else{
+			position = position.left(1)
+		}
 	}
+
+	method paso()= self.position().x()==0
 	
 	method chocar(){
 		//COMPLETAR
+		juego.terminar()
 	}
     method detener(){
 		//COMPLETAR
+		game.removeTickEvent("moverCactus")
+		
 	}
 }
 
@@ -105,20 +121,29 @@ object dino {
 	
 	method saltar(){
 		//COMPLETAR
+		if(self.estaEnElSuelo()){
+			self.subir()
+			game.onTick(velocidad*3,"gravedad",{self.bajar()})
+		}
 	}
+	method estaEnElSuelo()= self.position().y()==suelo.position().y()
 	
 	method subir(){
 		position = position.up(1)
 	}
 	
 	method bajar(){
-		position = position.down(1)
+		if(!self.estaEnElSuelo()){
+			position = position.down(1)
+			game.removeTickEvent("gravedad")
+		}
 	}
 	method morir(){
 		game.say(self,"¡Auch!")
 		vivo = false
 	}
 	method iniciar() {
+		game.say(self,"")
 		vivo = true
 	}
 	method estaVivo() {
