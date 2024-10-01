@@ -50,20 +50,25 @@ object gameOver {
 }
 
 object reloj {
-	var property tiempo = 0 
-	method text() = tiempo.toString()
-  //method textColor() = "00FF00FF"
+	var property segundos = 0
+	var property minutos = 0
+	method text() = "" + minutos + ": " + segundos
+    method textColor() = "FF0000FF"
 	method position() = game.at(1, game.height()-1)
 	
 	method pasarTiempo() {
-		//COMPLETAR
+	if (segundos == 60){
+		minutos = minutos + 1
+		segundos = 0
+	}
+	segundos = segundos + 1
 	}
 	method iniciar(){
-		tiempo = 0
-		game.onTick(100,"tiempo",{self.pasarTiempo()})
+		segundos = 0
+		game.onTick(1000,"tiempo",{self.pasarTiempo()})
 	}
 	method detener(){
-		//COMPLETAR
+		game.removeTickEvent("tiempo")
 	}
 }
 
